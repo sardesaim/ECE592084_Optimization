@@ -1,33 +1,39 @@
-function [] = steepestGrad(func,X_Init)
-%UNTITLED6 Summary ofunc this funcunction goes here
+function [X_init_array1] = steepestGrad(f, X_init_array1)
+%GRADDESC Summary of this function goes here
 %   Detailed explanation goes here
-    syms x1 x2;
+    syms x1 x2 alph;
+    grad = {};
     epsilon = .001;
-    dx1=diff(func,x1);
-    grad{1}(1) = double(subs(dx1,{x1,x2},X_Init{1}));
-    dx2=diff(func,x2);
-    grad{1}(2) = double(subs(dx2,{x1,x2},X_Init{1}));
-    X_Init{2}= X_Init{1}-alpha*grad{1};
+%     Initialize first gradients and 2nd element
+    grad{1} = subs(gradient(f, [x1 x2]), {x1,x2}, X_init_array1(1))';
+    searchDir = -gradient(f, [x1 x2]);
+    fx_ag = subs(f, [x1, x2], {x1+alph*searchDir(1), x2+alph*searchDir(2)});
+    f_alph{1} = subs(fx_ag, [x1, x2], {X_init_array1(1)});
+    f_dash_alph{1} = diff(f_alph{1}, alph);
+    f_ddash_alph{1} = diff(diff(f_alph{1}, alph));
+    alpha{1} = 0.05;
+    alpha{2} = alpha{1} - double(subs(f_dash_alph{1}/f_ddash_alph{1}, alph, alpha{1}));
+    i = 2
+%     new_f = subs(f-alph*gradient(f,[x1 x2]),{x1 x2}, [X_init_array1(1)]);
+%     new_fn = subs(f,new_f);
+%     sub
+%     alpha{1} = argmin(double(subs(f-alph*gradient(f,[x1 x2]),{x1 x2}, [X_init_array1(1)])));
+%     X_init_array1{2}= X_init_array1{1}-alpha{1}*grad{1};
+    X_init_array1{2}= X_init_array1{1}-alpha{1}*grad{1};
     k = 2;    
-    while(norm((X_Init{k-1}-X_Init{k}),2)>epsilon)
-        dx1=diff(func,x1);
-        grad{k}(1) = double(subs(dx1,{x1,x2},X_Init{k}));
-        dx2=diff(func,x2);
-        grad{k}(2) = double(subs(dx2,{x1,x2},X_Init{k}));
-        X_Init{k+1}= X_Init{k}-alpha*grad{k};
+%     Iterate till the norm of consecutive points becomes less than epsilon
+    while(norm((X_init_array1{k-1}-X_init_array1{k}),2)>epsilon)
+        syms alph;
+        g = subs(f, [x1 x2], [X_init_array1(k)+alph*searchDir]);
+        grad{k} = (double(subs(gradient(f, [x1 x2]), {x1,x2}, X_init_array1(k))))';
+        while(norm(alpha{i-1}-alpha(i)>epsilon))
+            f_alph{i} = subs(fx_ag, [x1, x2], {X_init_array1(1)});
+            f_dash_alph{i} = diff(f_alph, alph);
+            f_ddash_alph{i} = diff(diff(f_alph, alph)); 
+            alpha{i+1} = alpha{i} - double(subs(f_dash_alph{1}/f_ddash_alph{1}, alph, alpha{i}));
+        end
+        X_init_array1{k+1}= X_init_array1{k}-alpha{i}*grad{k};
         k = k+1;
     end
-    x = linspace(-1,1,50);
-    y = x;
-    [x1,x2] = meshgrid(x,y);
-    func = (x2-x1).^4+12.*x1.*x2-x1+x2-3;
-    box on; mesh(x1,x2,func);
-    funcigure;
-    contour(x1,x2,func, 20); hold on; 
-    for i = 1:length(X_Init)
-        px(i) = X_Init{i}(1);
-        py(i) = X_Init{i}(2);
-    end
-    hold on;
-    plot(px, py, 'x-');
 end
+
