@@ -1,4 +1,4 @@
-clc; close all;
+clc; clear all; close all;
 
 %Gradient descent 
 syms x1 x2;
@@ -35,7 +35,7 @@ end
 hold on;
 plot(px, py, '^-'); %plot sequence of points starting from starting point1
 %Steepest gradient
-syms x1 x2;
-f = (x2-x1).^4+12.*x1.*x2-x1+x2-3;
-X_init_array1 = steepestGrad(f, X_init_array1);
-X_init_array2 = steepestGrad(f, X_init_array2);
+% syms x1 x2;
+% f = (x2-x1).^4+12.*x1.*x2-x1+x2-3;
+% X_init_array1 = steepestGrad(f, X_init_array1);
+% X_init_array2 = steepestGrad(f, X_init_array2);

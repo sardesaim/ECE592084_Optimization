@@ -7,17 +7,14 @@ gx = gradient(f(x1, x2))';
 a = []; a0 = NaN ; b0 = NaN;
 epsilon = 0.075
 phia = @(alph) subs(f(x1-alph*gx(1), x2-alph*gx(1)), [x1 x2], X_init(1));
-a(1) = -0.5; a(2) = a(1)+epsilon; a(3) = a(2)+2*epsilon;
+a(1) = 2; a(2) = 2+epsilon; a(3) = 2+4;
 %bracketing procedure
 while (isnan(a0) && isnan(b0))
     if(double(phia(a(1)))>double(phia(a(2)))&& double(phia(a(2)))< double(phia(a(3))))
         a0 = a(1); b0 = a(3);
     elseif(double(phia(a(1))) > double(phia(a(2))) && double(phia(a(2))) > double(phia(a(3))))
-        a(4) = a(3)+4*epsilon;
+        a(4) = a(3)+0.5;
         if(double(phia(a(4)))>double(phia(a(3))))
-            a0=a(1); b0 = a(4);
-        else
-            a(4) = a(4)+8*epsilon;
             a0=a(1); b0 = a(4);
         end
     else
@@ -48,18 +45,11 @@ for n = 1:N
        f2 = double(phia(t))
     end
 end
-alpha = (s+t)/2;
-X_init{2} = X_init{1} - alpha*double(subs(gx,[x1 x2], X_init(1)));
+X_init{2} = X_init{1} - a*double(subs(gx,[x1 x2], X_init(1)));
 
 x = linspace(-1,1,50);
 y = x;
 [x1,x2] = meshgrid(x,y);
 box on; mesh(x1,x2,f(x1, x2));
 figure;
-contour(x1,x2,f(x1,x2), 20);
-for i = 1:length(X_init)
-    px(i) = X_init{i}(1);
-    py(i) = X_init{i}(2);
-end
-hold on;
-plot(px, py, '^-'); %plot sequence of points starting from starting point1
+contour(x1,x2,f(x1,x2), 20)
