@@ -3,35 +3,23 @@ clc; clear all; close all;
 syms x1 x2 alph;
 % Declare function in terms of x1 x2
 f = @(x1, x2) x1.^2+x2.^2+x1.*x2;
-X_init = [0.2,-.2];
-% find gradient of f
-gx = gradient(f(x1, x2))';
+X_init = [0.8,-.25];
 epsilon = 0.075;
 k = 1;
-% replace x1 x2 by x1-alph*gx(1) and x2-alph*gx(2) resp
-% phia = @(alph) subs(f(x1-alph*gx(1), x2-alph*gx(1)), [x1 x2], X_init(k));
+
 [a0, b0] = Bracketing(f, X_init, epsilon); %run bracketing on phia to find points
 [s,t, dat] = GoldenSection(a0,b0,f);
+[s1,t1, dat1] = FibonacciSeq(a0,b0,f);
+xlswrite('GoldenSearch.xlsx',dat);
+xlswrite('Fibonacci.xlsx', dat1);
+
+%Previous attempt was to reduce range of alpha so that f(x-alpha*g) would
+%be minimum. 
+
+% replace x1 x2 by x1-alph*gx(1) and x2-alph*gx(2) resp
+% phia = @(alph) subs(f(x1-alph*gx(1), x2-alph*gx(1)), [x1 x2], X_init(k));
 % x0 = X_init; x1 = x0+epsilon; x2 = x1+2*epsilon;
 % n = 1;
-%bracketing procedure
-% while not((f(x0(1), x0(2))>f(x1(1), x1(2))) && (f(x1(1), x1(2))<f(x2(1), x2(2))))
-%     if((f(x0(1), x0(2))>f(x1(1), x1(2))) && (f(x1(1), x1(2))<f(x2(1), x2(2))))
-%         a0 = x0; 
-%         b0 = x2;
-%     elseif((f(x0(1), x0(2))>f(x1(1), x1(2))) && (f(x1(1), x1(2))>f(x2(1), x2(2))))
-%         x0 = x1; 
-%         x1 = x2; 
-%         x2 = x2+(2^(n+1))*epsilon;
-%     elseif((f(x0(1), x0(2))<f(x1(1), x1(2))) && (f(x1(1), x1(2))<f(x2(1), x2(2))))
-%         x2 = x1;
-%         x1 = x0;       
-%         x0 = x0-(2^(n+1))*epsilon;
-%     end
-%     n = n+1;
-% end
-
-
 % alpha = GoldenSection(a0,b0, phia); %run golden section on the bracketed points 
 % X_init{2} = X_init{1} - alpha*double(subs(gx,[x1 x2], X_init(1))); %find next point with that alpha
 % k = 2;
