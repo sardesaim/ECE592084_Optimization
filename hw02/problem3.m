@@ -2,7 +2,7 @@ clc; clear all; close all;
 
 %Gradient descent 
 syms x1 x2;
-f = (x2-x1).^4+12.*x1.*x2-x1+x2-3;
+f = @(x1, x2) (x2-x1).^4+12.*x1.*x2-x1+x2-3; %declare the function in terms of x1, x2
 %Initializations for the sequence of points
 X_init_array1{1} = [0.55, 0.7]; %starting point 1
 X_init_array1{2} = [0,0];
@@ -33,9 +33,25 @@ for i = 1:length(X_init_array2)
     py1(i) = X_init_array2{i}(2);
 end
 hold on;
-plot(px1, py1, 'x-'); %plot sequence of points starting from starting point1
+plot(px1, py1, 'x-'); %plot sequence of points starting from starting point2
+
 %Steepest gradient
-% syms x1 x2;
-% f = (x2-x1).^4+12.*x1.*x2-x1+x2-3;
-% X_init_array1 = steepestGrad(f, X_init_array1);
-% X_init_array2 = steepestGrad(f, X_init_array2);
+syms x1 x2;
+f = @(x1, x2) (x2-x1).^4+12.*x1.*x2-x1+x2-3; %declare the function in terms of x1, x2
+X_init_array3{1} = [0.55, 0.7]; %starting point 1
+X_init_array3{2} = [0,0];
+X_init_array3 = steepestGrad(f, X_init_array3);
+
+%plotting the contours/ level sets for the function to plot sequence later
+x = linspace(-1,1,50);
+y = x;
+[x1,x2] = meshgrid(x,y);
+f = (x2-x1).^4+12.*x1.*x2-x1+x2-3;
+figure;
+contour(x1,x2,f, 20); hold on; 
+for i = 1:length(X_init_array3)
+    px2(i) = X_init_array3{i}(1);
+    py2(i) = X_init_array3{i}(2);
+end
+hold on;
+plot(px2, py2, 'x-'); %plot sequence of points starting from starting point1 using sd

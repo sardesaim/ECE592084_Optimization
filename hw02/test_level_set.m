@@ -3,7 +3,7 @@ clc; clear all; close all;
 syms x1 x2;
 f = @(x1, x2) (x2-x1).^4+12.*x1.*x2-x1+x2-3; %declare the function in terms of x1, x2
 epsilon = .001;
-X_init_array1{1} = [0.55, 0.7];
+X_init_array1{1} = [-0.9, -0.5];
 %     Initialize first gradients and 2nd element
 grad{1} = double(subs(gradient(f(x1, x2), [x1 x2]), {x1,x2}, X_init_array1(1)))';
 syms alph;
