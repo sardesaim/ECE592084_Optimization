@@ -12,6 +12,11 @@ X_init_array2{2} = [0,0];
 X_init_array1 = gradDesc(f, X_init_array1);
 X_init_array2 = gradDesc(f, X_init_array2);
 
+%Steepest gradient method
+X_init_array3{1} = [0.55, 0.7]; %starting point 1
+X_init_array3{2} = [0,0];
+X_init_array3 = steepestGrad(f, X_init_array3);
+
 %plotting the contours/ level sets for the function to plot sequence later
 x = linspace(-1,1,50);
 y = x;
@@ -35,18 +40,6 @@ end
 hold on;
 plot(px1, py1, 'x-'); %plot sequence of points starting from starting point2
 
-%Steepest gradient
-syms x1 x2;
-f = @(x1, x2) (x2-x1).^4+12.*x1.*x2-x1+x2-3; %declare the function in terms of x1, x2
-X_init_array3{1} = [0.55, 0.7]; %starting point 1
-X_init_array3{2} = [0,0];
-X_init_array3 = steepestGrad(f, X_init_array3);
-
-%plotting the contours/ level sets for the function to plot sequence later
-x = linspace(-1,1,50);
-y = x;
-[x1,x2] = meshgrid(x,y);
-f = (x2-x1).^4+12.*x1.*x2-x1+x2-3;
 figure;
 contour(x1,x2,f, 20); hold on; 
 for i = 1:length(X_init_array3)

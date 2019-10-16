@@ -4,7 +4,7 @@ clear all; clc; close all;
 syms x1 x2;
 %define the function in terms of symbolic variables x1 and x2
 f = (x2-x1).^4+12.*x1.*x2-x1+x2-3;
-X_init_array1{1} = [.4,-.45];
+X_init_array1{1} = [1,-.8];
 X_init_array1{2} = [0,0]; %initialize second point in the sequence
 % alpha = 0.02;
 epsilon = .001; %set epsilon to some small value
@@ -29,14 +29,14 @@ if (eig(hess{1})>0) %check for the kth Hessian to be pd
             X_init_array1{k+1}= X_init_array1{k}-(pinv(hess{k})*grad{k})';
             k = k+1;
         else
-            disp('Hessian of the matrix is not pd. Newtons method would not converge');
+            sprintf('Hessian at the %d th is not pd. Descent not guaranteed.', k);
         end
     end
 else
-    disp('Hessian of the matrix is not pd. Newtons method would not converge');
+    disp('Hessian at the first point is not pd. Descent not guaranteed.');
 end
 
-%plotting the contours/ level sets for the function to plot sequence later
+% plotting the contours/ level sets for the function to plot sequence later
 x = linspace(-1,1,50);
 y = x;
 [x1,x2] = meshgrid(x,y);
