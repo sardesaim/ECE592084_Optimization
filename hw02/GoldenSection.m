@@ -35,9 +35,9 @@ function [s,t, dat] = GoldenSection(a0, b0, fcn)
 %         dat{n,:} = {n,rho,s,t,f1,f2,[s,t]};
         dat{n+1,1} = n;
         dat{n+1,2} = rho;
-        dat{n+1,3} = s;
-        dat{n+1,4} = t;
-        dat{n+1,7} = [s;t];
+        dat{n+1,3} = mat2str(s);
+        dat{n+1,4} = mat2str(t);
+        dat{n+1,7} = mat2str([s;t]);
     end
 end
 
