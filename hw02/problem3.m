@@ -29,11 +29,11 @@ plot(px, py, '^-'); %plot sequence of points starting from starting point1
 figure;
 contour(x1,x2,f, 20); hold on; 
 for i = 1:length(X_init_array2)
-    px(i) = X_init_array2{i}(1);
-    py(i) = X_init_array2{i}(2);
+    px1(i) = X_init_array2{i}(1);
+    py1(i) = X_init_array2{i}(2);
 end
 hold on;
-plot(px, py, '^-'); %plot sequence of points starting from starting point1
+plot(px1, py1, 'x-'); %plot sequence of points starting from starting point1
 %Steepest gradient
 % syms x1 x2;
 % f = (x2-x1).^4+12.*x1.*x2-x1+x2-3;

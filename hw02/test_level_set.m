@@ -2,7 +2,7 @@ clc; clear all; close all;
 %declare symbolic variable x1 x2
 syms x1 x2;
 f = @(x1, x2) (x2-x1).^4+12.*x1.*x2-x1+x2-3; %declare the function in terms of x1, x2
-epsilon = .01;
+epsilon = .001;
 X_init_array1{1} = [0.55, 0.7];
 %     Initialize first gradients and 2nd element
 grad{1} = double(subs(gradient(f(x1, x2), [x1 x2]), {x1,x2}, X_init_array1(1)))';
@@ -18,24 +18,21 @@ alpha{2} = alpha{1}-double(subs((f_dash_alph/f_ddash_alph), alph, alpha{1}));
 X_init_array1{2}= X_init_array1{1}-alpha{1}*grad{1};
 k = 2;
 %     Iterate till the norm of consecutive points becomes less than epsilon
-while(k<500&& norm((X_init_array1{k-1}-X_init_array1{k}),2)>epsilon)
+while(k<500&& norm((X_init_array1{k}-X_init_array1{k-1}),2)>epsilon)
+    syms alph;
     grad{k} = (double(subs(gradient(f(x1, x2), [x1 x2]), {x1,x2}, X_init_array1(k))))';
-    i = 2;
+%     i = 2;
 %     alpha_new{1} = alpha{k-1};
 %     alpha_new{2} = 0;
-    alpha_old = alpha{k};
-    alpha_new = 0;
 %     while(abs(alpha_new{end}-alpha_new{end-1})>0.001)    
-    while(abs(alpha_old-alpha_new)>0.001)    
-        alpha_new = alpha_old;
-        f_alph = subs(fx_ag, [x1, x2], {X_init_array1(k)});
-        f_dash_alph = diff(f_alph, alph);
-        f_ddash_alph = diff(f_dash_alph, alph);
-        alpha_new = alpha_old - double(subs((f_dash_alph/f_ddash_alph), alph, alpha_old));
+    f_alph = subs(fx_ag, [x1, x2], {X_init_array1(k)});
+    f_dash_alph = diff(f_alph, alph);
+    f_ddash_alph = diff(f_dash_alph, alph);
+    alpha{k} = alpha{k-1}- double(subs((f_dash_alph/f_ddash_alph), alph, alpha{k-1}));
 %         alpha{k+1} = alpha{k}- double(subs((f_dash_alph/f_ddash_alph), alph, alpha{k}));
 %         i = i+1;
-    end
-    alpha{k} = alpha_new;
+%     end
+%     alpha{k} = alpha_new{i-1};
     X_init_array1{k+1}= X_init_array1{k}-alpha{k}*grad{k};
 %     X_init_array1{k+1}= X_init_array1{k}-0.0834*grad{k};
     k = k+1;
