@@ -17,6 +17,10 @@ X_init_array3{1} = [0.55, 0.7]; %starting point 1
 X_init_array3{2} = [0,0];
 X_init_array3 = steepestGrad(f, X_init_array3);
 
+X_init_array4{1} = [-0.9,-0.5]; %starting point 1
+X_init_array4{2} = [0,0];
+X_init_array4 = steepestGrad(f, X_init_array4);
+
 %plotting the contours/ level sets for the function to plot sequence later
 x = linspace(-1,1,50);
 y = x;
@@ -48,3 +52,12 @@ for i = 1:length(X_init_array3)
 end
 hold on;
 plot(px2, py2, 'x-'); %plot sequence of points starting from starting point1 using sd
+
+figure;
+contour(x1,x2,f, 20); hold on; 
+for i = 1:length(X_init_array4)
+    px3(i) = X_init_array4{i}(1);
+    py3(i) = X_init_array4{i}(2);
+end
+hold on;
+plot(px3, py3, 'x-'); %plot sequence of points starting from starting point1 using sd
