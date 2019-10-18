@@ -1,5 +1,5 @@
 clc; clear all; close all;
-% Declare the symbolic variables
+%% Declare the symbolic variables
 syms x1 x2 alph;
 % Declare function in terms of x1 x2
 f = @(x1, x2) x1.^2+x2.^2+x1.*x2;
@@ -8,12 +8,12 @@ epsilon = 0.075;
 k = 1;
 
 [a0, b0] = Bracketing(f, X_init, epsilon); %run bracketing on phia to find points
-[s,t, dat] = GoldenSection(a0,b0,f);
+[s,t, dat] = GoldenSection2(a0,b0,f);
 [s1,t1, dat1] = FibonacciSeq(a0,b0,f);
 xlswrite('GoldenSearch.xlsx',dat);
 xlswrite('Fibonacci.xlsx', dat1);
-
-%Previous attempt was to reduce range of alpha so that f(x-alpha*g) would
+%%
+%%Previous attempt was to reduce range of alpha so that f(x-alpha*g) would
 %be minimum. 
 
 % replace x1 x2 by x1-alph*gx(1) and x2-alph*gx(2) resp

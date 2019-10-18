@@ -10,24 +10,24 @@ function [a,b, dat] = GoldenSection(a0, b0, fcn)
     b = b0;
     s = a+rho*(b-a);
     t = a+(1-rho)*(b-a);
-    f1= double(subs(fcn, alph, s));
-    f2= double(subs(fcn, alph, t));
+    f1= fcn(s(1),s(2));
+    f2= fcn(t(1),t(2));
     dat = {'Iteration','rhok','ak','bk','f(ak)','f(bk)','new int', 'range'};
     for n = 1:N
-        if double(subs(fcn, alph, s))< double(subs(fcn, alph, t))
+        if fcn(s(1),s(2))< fcn(t(1),t(2))
            b = t;
            t = s;
            s = a+rho*(b-a);
            f2 = f1;
-           f1 = double(subs(fcn, alph, s));
+           f1 = fcn(s(1),s(2));
            dat{n+1,5} = f1;
            dat{n+1,6} = f2;   
-        elseif double(subs(fcn, alph, s))> double(subs(fcn, alph, t))
+        elseif fcn(s(1),s(2))> fcn(t(1),t(2))
            a = s;
            s = t;
            t = a+(1-rho)*(b-a);
            f1 = f2;
-           f2 = double(subs(fcn, alph, t));
+           f2 = fcn(t(1),t(2));
            dat{n+1,5} = f1;
            dat{n+1,6} = f2;
         else
