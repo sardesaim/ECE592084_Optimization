@@ -77,6 +77,7 @@ def RankOne(X_init, f):
         X_init.append(X_init[-1]+np.multiply(alpha,d))
         iters = 1
         while normx > epsilon and iters < max_iterations:
+            Hk = H[-1]
             gradk = grad(X_init[-1][0],X_init[-1][1])
             dk = -Hk.dot(gradk)
             fAlph = lambda alpha: (f(X_init[-1][0] + alpha*dk[0], X_init[-1][1] + alpha*dk[1]))
@@ -89,6 +90,11 @@ def RankOne(X_init, f):
             H.append(np.array(Hk+(((deltaXk-Hk.dot(deltaGk)).dot(np.transpose((deltaXk-Hk.dot(deltaGk)))) )\
                          /(np.transpose(deltaGk).dot(deltaXk-Hk.dot(deltaGk))))))
             normx = np.linalg.norm(X_init[-1]-X_init[-2])
+            if np.all(np.linalg.eigvals(H[-1]) > 0):
+                print('The estimated Hk+1 is not pd, descent not guaranteed')
+                break
+            else:
+                continue
             iters+=1
         return X_init
     
@@ -109,6 +115,7 @@ def DFP(X_init, f):
         X_init.append(X_init[-1]+np.multiply(alpha,d))
         iters = 1
         while normx > epsilon and iters < max_iterations:
+            Hk = H[-1]
             gradk = grad(X_init[-1][0],X_init[-1][1])
             dk = -Hk.dot(gradk)
             fAlph = lambda alpha: (f(X_init[-1][0] + alpha*dk[0], X_init[-1][1] + alpha*dk[1]))
@@ -142,6 +149,7 @@ def BFGS(X_init, f):
         X_init.append(X_init[-1]+np.multiply(alpha,d))
         iters = 1
         while normx > epsilon and iters < max_iterations:
+            Hk = H[-1]
             gradk = grad(X_init[-1][0],X_init[-1][1])
             dk = -Hk.dot(gradk)
             fAlph = lambda alpha: (f(X_init[-1][0] + alpha*dk[0], X_init[-1][1] + alpha*dk[1]))
@@ -151,8 +159,11 @@ def BFGS(X_init, f):
             X_init.append(X_init[iters]+np.multiply(alphak,dk))
             deltaXk = alphak*dk
             deltaGk = np.subtract(grad(X_init[-1][0],X_init[-1][1]),gradk)
-            H.append(np.array(Hk+(((deltaXk-Hk.dot(deltaGk)).dot(np.transpose((deltaXk-Hk.dot(deltaGk)))) )\
-                         /(np.transpose(deltaGk).dot(deltaXk-Hk.dot(deltaGk))))))
+            H.append(np.array(Hk+np.array(1+(((np.transpose(deltaGk)).dot(Hk)).dot(deltaGk))/(np.transpose(deltaGk).dot(deltaXk)))\
+                                  .dot(((deltaXk.dot(np.transpose(deltaXk)))/(np.transpose(deltaGk)).dot(deltaXk)))\
+                                  -(((Hk.dot(deltaGk)).dot(np.transpose(deltaXk)))+ \
+                                    np.transpose(((Hk.dot(deltaGk)).dot(np.transpose(deltaXk))))\
+                                    /((np.transpose(deltaGk)).dot(deltaXk)))))
             normx = np.linalg.norm(X_init[-1]-X_init[-2])
             iters+=1
         return X_init
@@ -171,6 +182,7 @@ def plotSeq(X_init):
         plx.append(X_init[i][0])
         ply.append(X_init[i][1])
     plt.plot(plx, ply , 'b-^')
+#    plt.quiver(plx[:-1], ply[:-1], scale_units='xy', angles='xy', scale=1)
 
 if __name__ == "__main__":
     #define function in terms of x1 x2 
@@ -181,6 +193,7 @@ if __name__ == "__main__":
     alpha = 0.05
     epsilon = 0.001
     max_iterations = 1000
+    
     X_init = []
     X_init.append(np.array([0.55,0.7]))
     X_init = RankOne(X_init,f)
@@ -192,6 +205,21 @@ if __name__ == "__main__":
     plotSeq(X_init1)
     
     X_init2 = []
-    X_init2.append(np.array([-0.9,-0.5]))
+    X_init2.append(np.array([0.55,0.7]))
     X_init2 = DFP(X_init2,f)
     plotSeq(X_init2)
+    
+    X_init3 = []
+    X_init3.append(np.array([-0.9,-0.5]))
+    X_init3 = DFP(X_init3,f)
+    plotSeq(X_init3)
+    
+    X_init4 = []
+    X_init4.append(np.array([.55,0.7]))
+    X_init4 = BFGS(X_init4,f)
+    plotSeq(X_init4)
+    
+    X_init5 = []
+    X_init5.append(np.array([-.9,-0.5]))
+    X_init5 = BFGS(X_init5,f)
+    plotSeq(X_init5)
