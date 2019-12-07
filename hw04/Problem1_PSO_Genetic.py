@@ -14,6 +14,7 @@ class GlobalSearchAlgos():
     epsilon = 0.02
     max_iterations = 1000
     numPositions = 0
+    epochs = 10
     gbvals=[]
     wrsVals = []
     meanVals = []
@@ -32,6 +33,7 @@ class GlobalSearchAlgos():
         c1 = 2
         c2 = 2
         X_pos = []
+        p_pos = []
         vel = []
         X_pos.append(np.random.rand(self.numPositions,2)*2.0-1)
         vel.append(np.random.rand(self.numPositions,2))
@@ -39,33 +41,35 @@ class GlobalSearchAlgos():
         fval = []
         for i,val in enumerate(X_pos[-1]):
             fval.append(self.f(X_pos[-1][i][0],X_pos[-1][i][1]))
-        p = []
-        gBest = 0
-        p = X_pos
-        gBest = X_pos[-1][fval.index(min(fval))]
-        while k<20:
+        gBest = []
+        p_pos = X_pos
+        gBest.append(X_pos[-1][fval.index(min(fval))])
+        while k<self.epochs:
             r=np.random.rand(self.numPositions,2)
             s=np.random.rand(self.numPositions,2)    
-            vel = np.multiply(w,vel[-1])+np.multiply(np.multiply(c1,r), (p[-1]-X_pos[-1])) + \
-                       np.multiply(np.multiply(c2,s), (gBest-X_pos[-1]))
-            X_pos[-1] = X_pos[-1] + vel
+            vel.append(np.multiply(w,vel[-1])+np.multiply(np.multiply(c1,r), (p_pos[-1]-X_pos[-1])) + \
+                       np.multiply(np.multiply(c2,s), (gBest[-1]-X_pos[-1])))
+            p_pos.append(p_pos[-1])
+            X_pos.append(X_pos[-1] + vel[-1])
             fval=[]
+            gBestTemp = gBest[-1]
             for i,val in enumerate(X_pos[-1]):
                 fval.append(self.f(X_pos[-1][i][0],X_pos[-1][i][1]))
-                if(self.f(X_pos[-1][i][0],X_pos[-1][i][1])<self.f(p[-1][i][0],p[-1][i][1])):
-                    p[-1][i] = X_pos[-1][i]
+                if(fval[-1]<self.f(p_pos[-1][i][0],p_pos[-1][i][1])):
+                    p_pos[-1][i] = X_pos[-1][i]
                 else:
-                    p[-1][i] = p[-1][i]
-                if(self.f(X_pos[-1][i][0],X_pos[-1][i][1])<self.f(gBest[0],gBest[1])):
-                    gBest = X_pos[-1][i]
+                    pass
+                if(fval[-1]<self.f(gBest[-1][0],gBest[-1][1])):
+                    gBestTemp = X_pos[-1][i]
                 else:
-                    gBest = gBest
-            self.gbvals.append(self.f(gBest[0], gBest[1]))
+                    pass
+            gBest.append(gBestTemp)
+            self.gbvals.append(self.f(gBest[-1][0], gBest[-1][1]))
             self.meanVals.append(np.mean(fval))
             self.wrsVals.append(self.f(X_pos[-1][fval.index(max(fval))][0],X_pos[-1][fval.index(max(fval))][1]))
-            print(vel)
+#            print(fval,end='\n')
             k+=1
-        return gBest
+        return gBest[-1]
     
     def bit2num(self,bit, rng):
         integ = np.polyval(bit,2)
@@ -161,7 +165,7 @@ class GlobalSearchAlgos():
         and save the level sets and points in a .csv file
         """
         plt.figure()
-        x = np.linspace(1,20,20)
+        x = np.linspace(1,self.epochs, self.epochs)
         plt.plot(x,self.gbvals, 'r', x, self.wrsVals, 'b', x, self.meanVals, 'g')
 #        plt.plot(x,self.wrsVals)
 #        plx = []
@@ -174,8 +178,7 @@ class GlobalSearchAlgos():
 #        plt.plot(plx, ply , 'b-^')
         
 if __name__ == "__main__":  
-    ps = GlobalSearchAlgos(100)
-    plt.plot(np.linspace(1,500,500), np.zeros((500), dtype = 'float'))
+    ps = GlobalSearchAlgos(20)
     gB = ps.PSO()
     plt.figure()
     ps.plotCont()
