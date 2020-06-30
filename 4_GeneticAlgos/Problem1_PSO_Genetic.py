@@ -44,9 +44,9 @@ class GlobalSearchAlgos():
         gBest = []
         p_pos = X_pos
         gBest.append(X_pos[-1][fval.index(min(fval))])
+        r=np.random.rand(self.numPositions,2)
+        s=np.random.rand(self.numPositions,2)
         while k<self.epochs:
-            r=np.random.rand(self.numPositions,2)
-            s=np.random.rand(self.numPositions,2)    
             vel.append(np.multiply(w,vel[-1])+np.multiply(np.multiply(c1,r), (p_pos[-1]-X_pos[-1])) + \
                        np.multiply(np.multiply(c2,s), (gBest[-1]-X_pos[-1])))
             p_pos.append(p_pos[-1])
